@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { trim, isNotEmpty } from '../../lib/stringUtil'
 
 // ———————————————————
 
@@ -10,9 +11,6 @@ const INPUT_FILEPATH = '../in.txt'
 const OUTPUT_FILEPATH = 'out.txt'
 
 // ———————————————————
-
-const trim = (s: string) => s.trim()
-const isNotEmpty = (s: string) => s.length !== 0
 
 function main({ inputPath, outputPath }: Day01_IO): void {
     // === Read ===

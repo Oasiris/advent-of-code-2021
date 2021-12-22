@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "01-p1": "npx ts-node day-01/part-1",
-    "01-p2": "npx ts-node day-01/part-2"
+    "01-p2": "npx ts-node day-01/part-2",
+    "02-p1": "npx ts-node day-02/part-1"
   },
   "author": "",
   "license": "ISC",

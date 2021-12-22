@@ -1,3 +1,7 @@
+// ————————————
+// General
+// ————————————
+
 /**
  * @returns Whether the given value is both defined and non-null.
  */
