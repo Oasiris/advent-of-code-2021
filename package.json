@@ -4,7 +4,8 @@
   "description": "2021 Advent of Code solutions.",
   "main": "index.js",
   "scripts": {
-    "01": "npx ts-node day-01"
+    "01-p1": "npx ts-node day-01/part-1",
+    "01-p2": "npx ts-node day-01/part-2"
   },
   "author": "",
   "license": "ISC",
