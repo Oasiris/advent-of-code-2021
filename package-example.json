@@ -1,0 +1,30 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ops.js",
+  "scripts": {
+    "compare": "npx ts-node p3pCompare.ts",
+    "persona-sheet": "npx ts-node p3pPersonaSheet.ts",
+    "parse-skills": "npx ts-node parseP3pSkills.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "csv-parse": "^4.14.2",
+    "himalaya": "^1.1.0",
+    "jsdom": "^15.2.1",
+    "lodash": "^4.17.20",
+    "mnemonist": "^0.30.0",
+    "pngjs": "^3.4.0",
+    "ramda": "^0.26.1",
+    "yargs": "^14.2.3"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.165",
+    "@types/node": "^14.14.14",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  }
+}
