@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import range from 'lodash/range'
 import { trim, isNotEmpty } from '../../lib/stringUtil'
 
 // ——————————
