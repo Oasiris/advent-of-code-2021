@@ -4,7 +4,7 @@
   "description": "2021 Advent of Code solutions.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "01": "npx ts-node day-01"
   },
   "author": "",
   "license": "ISC",
