@@ -7,7 +7,6 @@ import range from 'lodash/fp/range'
 // ——————————
 
 import { IO as GenericIO } from '../../lib/models'
-import { exists } from '../../lib/util'
 type IO = GenericIO<string, string>
 
 const INPUT_FILEPATH = '../in.txt'
@@ -54,8 +53,25 @@ function main({ inputPath, outputPath }: IO): void {
         epsilon += coefficient * epsilonBit
         coefficient *= 2
     }
+
+    // // Now, we need to figure out the most common & least common numbers, gamma & epsilon.
+    // // We'll get them as binary # representations, formatted as strings.
+    // let gammaChars: string[] = []
+    // let epsilonChars: string[] = []
+    // for (const i of range(0, NUM_BITS)) {
+    //     const gammaBit = gammaBuckets[i] >= 0 ? 1 : 0
+    //     const epsilonBit = gammaBit == 1 ? 0 : 1
+    //     gammaChars.push(String(gammaBit))
+    //     epsilonChars.push(String(epsilonBit))
+    // }
+    // const gammaString: string = gammaChars.join('')
+    // const epsilonString: string = epsilonChars.join('')
+    // const gamma = parseInt(gammaString, 2)
+    // const epsilon = parseInt(epsilonString, 2)
+
     // Return the product.
     const product = gamma * epsilon
+    console.log({ gamma, epsilon, product })
 
     // === Write ===
     fs.writeFileSync(outputPath, String(product), 'utf8')

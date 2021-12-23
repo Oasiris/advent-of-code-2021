@@ -8,7 +8,8 @@
     "01-p2": "npx ts-node day-01/part-2",
     "02-p1": "npx ts-node day-02/part-1",
     "02-p2": "npx ts-node day-02/part-2",
-    "03-p1": "npx ts-node day-03/part-1"
+    "03-p1": "npx ts-node day-03/part-1",
+    "03-p2": "npx ts-node day-03/part-2"
   },
   "author": "",
   "license": "ISC",
