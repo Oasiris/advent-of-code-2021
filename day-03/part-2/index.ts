@@ -1,9 +1,10 @@
-import { exists, readFileSync as read, writeFileSync as write } from 'fs'
-import range from 'lodash/fp/range'
+import { readFileSync as read, writeFileSync as write } from 'fs'
 import { resolve } from 'path'
 
+import range from 'lodash/fp/range'
+
 import { trim, isNotEmpty } from '../../lib/stringUtil'
-import { argmax, argmin } from '../../lib/util'
+import { argmin } from '../../lib/util'
 
 const INPUT_FILEPATH: string = '../in.txt'
 const OUTPUT_FILEPATH: string = 'out.txt'
@@ -13,7 +14,7 @@ const OUTPUT_FILEPATH: string = 'out.txt'
 // === Read ===
 const input: string = read(resolve(__dirname, INPUT_FILEPATH), 'utf8')
 
-// Parse.
+// === Algorithm ===
 const lines: string[] = input.split('\n').map(trim).filter(isNotEmpty)
 const NUM_ITEMS: number = lines.length
 const NUM_BITS: number = lines[0].length
@@ -64,18 +65,11 @@ function findMajorityRuleIdx(bitCriteria: 'majority' | 'minority'): number {
             targetBit = argmin(buckets.map((list) => list.length)) === 1 ? 0 : 1
         }
         contenders = buckets[targetBit]
-        // console.log({ n, contenders, bucketSizes: buckets.map((list) => list.length), len: contenders.length })
         if (contenders.length === 1) {
-            // console.log(`Solution (${bitCriteria}) found`)
-            // console.log(
-            //     `idx ${contenders[0]}, binary ${lines[contenders[0]]}, value ${parseInt(lines[contenders[0]], 2)}`,
-            // )
             solution = contenders[0]
             break
         }
     }
-
-    // TODO: Remove this placeholder.
     return solution
 }
 
@@ -89,9 +83,7 @@ const co2ScrubberRating: string = lines[co2ScrubberIdx]
 
 // ————
 
-const oxyDecimal = parseInt(oxygenGeneratorRating, 2)
-const co2Decimal = parseInt(co2ScrubberRating, 2)
-const solution: number = oxyDecimal * co2Decimal
+const solution: number = parseInt(oxygenGeneratorRating, 2) * parseInt(co2ScrubberRating, 2)
 
 // === Write ===
 if (require.main === module) {

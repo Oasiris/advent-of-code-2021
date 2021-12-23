@@ -33,3 +33,14 @@ export function argmax(list: number[]): number {
 export function argmin(list: number[]): number {
     return list.indexOf(Math.min(...list))
 }
+
+/**
+ * @returns A boolean map whose keys are the elements in the array.
+ */
+export function toBooleanMap(list: number[]): { [x: string]: boolean } {
+    let boolMap = {}
+    list.forEach((num) => {
+        boolMap[num] = true
+    })
+    return boolMap
+}
