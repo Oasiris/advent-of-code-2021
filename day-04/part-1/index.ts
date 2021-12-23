@@ -1,4 +1,3 @@
-import * as assert from 'assert'
 import { readFileSync as read, writeFileSync as write } from 'fs'
 import { resolve } from 'path'
 
@@ -20,7 +19,8 @@ const input: string = read(resolve(__dirname, INPUT_FILEPATH), 'utf8')
 // Parse input.
 const boardStartIdx = input.indexOf('\n\n')
 const drawList: number[] = input.substring(0, boardStartIdx).trim().split(',').map(Number)
-const draws: Uint8Array = Uint8Array.from(drawList) // Convert to TypedArray for performance.
+const draws: Uint8Array = Uint8Array.from(drawList) // TypedArrays are more performant.
+// `draws` will eventually call every number from 0 - N, where N is the highest number.
 const NUM_VALUES = draws.length
 
 const boardStrings = input.substring(boardStartIdx).split('\n\n').map(trim).filter(isNotEmpty)
@@ -29,10 +29,8 @@ const boards: number[][][] = boardStrings.map((board) => {
     const rows = rowStrings.map((row) => row.split(' ').map(trim).filter(isNotEmpty).map(Number))
     return rows
 })
+const NUM_PLAYERS = boards.length
 const BOARD_SIZE = boards[0].length
-
-// `draws` will eventually call every number from 0 - N, where N is the highest number.
-const N = draws.length
 
 // Prepare player scoreboard.
 const WIN_PATHS = ['c0', 'c1', 'c2', 'c3', 'c4', 'r0', 'r1', 'r2', 'r3', 'r4']
@@ -64,55 +62,80 @@ for (const playerId in boards) {
     }
 }
 
-// Play the game.
-type Winner = { playerId: number; winPaths: number[] }
-let winners: Winner[] = []
-let calledNumbers: number[] = []
-let latestDraw: number
-for (const i in draws) {
-    latestDraw = draws[i]
-    calledNumbers.push(latestDraw)
-    // Allot points for that number we called.
-    const pointAwards = values[latestDraw]
-    for (const [playerId, ...awardTypes] of pointAwards) {
-        // For each player, determine in which rows and columns they won a point.
-        const scores = players[playerId].scores
-        const winPaths: number[] = []
-        for (const winPath of awardTypes) {
-            scores[winPath] += 1
-            // 5 in a row is bingo.
-            if (scores[winPath] >= BOARD_SIZE) {
-                winPaths.push(winPath)
+export type Winner = { playerId: number; board: number[][]; winPaths: number[] }
+
+/**
+ * Play the game.
+ */
+export function play(until: 'untilFirstWin' | 'untilAllWin'): {
+    winners: Winner[]
+    calledNumbers: number[]
+    lastDraw: number
+} {
+    let winners: Winner[] = []
+    let playerWinStatus: boolean[] = Array(NUM_PLAYERS).fill(false)
+    let calledNumbers: number[] = []
+    let latestDraw: number
+    for (const i in draws) {
+        latestDraw = draws[i]
+        calledNumbers.push(latestDraw)
+        // Allot points for that number we called.
+        const pointAwards = values[latestDraw]
+        for (const [playerId, ...awardTypes] of pointAwards) {
+            if (playerWinStatus[playerId] === true) {
+                continue // Ignore players that already won.
+            }
+            // For each player, determine in which rows and columns they won a point.
+            const scores = players[playerId].scores
+            const winPaths: number[] = []
+            for (const winPath of awardTypes) {
+                scores[winPath] += 1
+                // 5 in a row is bingo.
+                if (scores[winPath] >= BOARD_SIZE) {
+                    winPaths.push(winPath)
+                }
+            }
+            if (winPaths.length > 0) {
+                winners.push({ playerId, winPaths, board: boards[playerId] })
+                playerWinStatus[playerId] = true
             }
         }
-        if (winPaths.length > 0) {
-            winners.push({ playerId, winPaths })
+        if (winners.length > 0 && until === 'untilFirstWin') {
+            break
+        } else if (winners.length === NUM_PLAYERS && until === 'untilAllWin') {
+            break
         }
     }
-    if (winners.length > 0) {
-        assert.strictEqual(winners.length, 1, `Problem claimed 1 winner, but there were ${winners.length}: ${winners}`)
-        break
-    }
+    return { winners, calledNumbers, lastDraw: latestDraw }
 }
 
 // Now that we've determined the winner, calculate their score.
-const calledNumbersMap = toBooleanMap(calledNumbers)
-const winnerBoard: number[][] = boards[winners[0].playerId]
-const winnerBoardFlat: number[] = flatten(winnerBoard)
-let unmarkedSum: number = 0
-for (const num of winnerBoardFlat) {
-    if (calledNumbersMap[num] !== true) {
-        unmarkedSum += num
+/**
+ * @returns The sum of all numbers on the board that weren't called.
+ */
+export function sumUnmarkedNumbers(board: number[][], calledNumbers: number[]): number {
+    let unmarkedSum: number = 0
+    const calledNumbersMap = toBooleanMap(calledNumbers)
+    const boardFlat: number[] = flatten(board)
+    for (const num of boardFlat) {
+        if (calledNumbersMap[num] !== true) {
+            unmarkedSum += num
+        }
     }
+    return unmarkedSum
 }
 
 // ————
 
-const solution = unmarkedSum * latestDraw
-// console.log({ winner: winners[0], calledNumbers, winnerBoard, unmarkedSum, latestDraw, solution })
-
-// === Write ===
 if (require.main === module) {
+    // Simulate the game until the first player wins.
+    const { winners, calledNumbers, lastDraw } = play('untilFirstWin')
+    const unmarkedSum = sumUnmarkedNumbers(winners[0].board, calledNumbers)
+
+    const solution = unmarkedSum * lastDraw
+    // console.log({ winner: winners[0], winningBoard: winners[0].board, calledNumbers, unmarkedSum, lastDraw, solution })
+
+    // === Write ===
     write(resolve(__dirname, OUTPUT_FILEPATH), String(solution), 'utf8')
     console.log('Completed.')
 }
